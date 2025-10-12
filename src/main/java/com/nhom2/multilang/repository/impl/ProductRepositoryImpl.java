@@ -26,8 +26,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 	}
 
 	@Override
-	public void addProduct(Product product) {
-		productDAO.addProduct(product);
+	public int addProduct(Product product) {
+		return productDAO.addProduct(product);
 	}
 
 	@Override

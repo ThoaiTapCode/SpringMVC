@@ -5,19 +5,44 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nhom2.multilang.dto.ProductDTO;
 import com.nhom2.multilang.model.Product;
+import com.nhom2.multilang.model.ProductCategoryTranslation;
 import com.nhom2.multilang.repository.ProductRepository;
+import com.nhom2.multilang.service.ProductCategoryTranslationService;
 import com.nhom2.multilang.service.ProductService;
+import com.nhom2.multilang.service.ProductTranslationService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private ProductCategoryTranslationService productCategoryService;
+	@Autowired
+	private ProductTranslationService productTranslationService;
 
 	@Override
-	public List<Product> getAllProducts() {
-		return productRepository.getAllProducts();
+	public List<ProductDTO> getAllProducts(String languageId) {
+		List<Product> products = productRepository.getAllProducts();
+		return products.stream().map(p -> {
+			ProductDTO dto = new ProductDTO();
+			dto.setProductId(p.getProductId());
+			dto.setPrice(p.getPrice());
+			dto.setWeight(p.getWeight());
+			
+			ProductCategoryTranslation pc = 
+					productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
+			
+			dto.setProductCategoryName(pc != null ? pc.getCategoryName() : "N/A");
+			var translation = productTranslationService.getTranslation(p.getProductId(), languageId);
+			if (translation != null) {
+				dto.setProductName(translation.getProductName());
+				dto.setDescription(translation.getProductDescription());
+			}
+			return dto;
+		}).toList();
 	}
 
 	@Override
@@ -26,8 +51,8 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void addProduct(Product product) {
-		productRepository.addProduct(product);
+	public int addProduct(Product product) {
+		return productRepository.addProduct(product);
 	}
 
 	@Override

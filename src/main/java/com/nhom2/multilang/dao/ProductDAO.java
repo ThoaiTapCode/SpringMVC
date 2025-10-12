@@ -33,9 +33,12 @@ public class ProductDAO {
 		));
 	}
 	
-	public void addProduct(Product product) {
+	public int addProduct(Product product) {
 		String sql = "INSERT INTO product (price, weight, productCategoryID) VALUES (?, ?, ?)";
 		jdbcTemplate.update(sql, product.getPrice(), product.getWeight(), product.getProductCategoryId());
+		
+		String idSql = "SELECT LAST_INSERT_ID()";
+		return jdbcTemplate.queryForObject(idSql, Integer.class);
 	}
 	
 	public void updateProduct(Product product) {

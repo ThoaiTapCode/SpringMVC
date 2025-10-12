@@ -1,5 +1,7 @@
 package com.nhom2.multilang.repository.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -30,5 +32,10 @@ public class ProductCategoryTranslationRepositoryImpl implements ProductCategory
 	@Override
 	public void delete(int productCategoryId, String languageId) {
 		productCategoryTranslationDAO.deleteProductCategoryTranslation(productCategoryId, languageId);
+	}
+
+	@Override
+	public List<ProductCategoryTranslation> getByProductCategoryId(int productCategoryId) {
+		return productCategoryTranslationDAO.getProductCategoryTranslationsById(productCategoryId);
 	}
 }

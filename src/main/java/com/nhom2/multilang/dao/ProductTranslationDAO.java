@@ -1,6 +1,7 @@
 package com.nhom2.multilang.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,14 +13,18 @@ public class ProductTranslationDAO {
 	private JdbcTemplate jdbcTemplate;
 	
 	public ProductTranslation getProductTranslationByIdAndLang(int productId, String languageId) {
-		String sql = "SELECT * FROM producttranslation WHERE productID = ? AND languageID = ?";
-		return jdbcTemplate.queryForObject(sql, new Object[] { productId, languageId },
-				(rs, rowNum) -> new ProductTranslation(
-						rs.getInt("productID"),
-						rs.getString("languageID"),
-						rs.getString("productName"),
-						rs.getString("productDescription")
-		));
+		try {
+			String sql = "SELECT * FROM producttranslation WHERE productID = ? AND languageID = ?";
+			return jdbcTemplate.queryForObject(sql, new Object[] { productId, languageId },
+					(rs, rowNum) -> new ProductTranslation(
+							rs.getInt("productID"),
+							rs.getString("languageID"),
+							rs.getString("productName"),
+							rs.getString("productDescription")
+							));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 	
 	public void addProductTranslation(ProductTranslation pt) {

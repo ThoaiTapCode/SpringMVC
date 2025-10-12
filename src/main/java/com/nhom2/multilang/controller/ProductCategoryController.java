@@ -22,64 +22,86 @@ import com.nhom2.multilang.service.ProductCategoryTranslationService;
 @RequestMapping("/categories")
 public class ProductCategoryController {
 
-    @Autowired
-    private ProductCategoryService productCategoryService;
-    @Autowired
-    private LanguageService languageService;
-    @Autowired
-    private ProductCategoryTranslationService productCategoryTranslationService;
+	@Autowired
+	private ProductCategoryService productCategoryService;
+	@Autowired
+	private LanguageService languageService;
+	@Autowired
+	private ProductCategoryTranslationService productCategoryTranslationService;
 
-    @GetMapping
-    public String list(Model model) {
-    	List<ProductCategory> categories = productCategoryService.getAllProductCategories();
-    	List<ProductCategoryDTO> categoryDTOs = categories.stream().map(category -> {
-    				ProductCategoryTranslation translation = productCategoryTranslationService
-							.getTranslation(category.getProductCategoryId(), "en");
-					String categoryName = translation != null ? translation.getCategoryName() : "N/A";
-					return new ProductCategoryDTO(
-							category.getProductCategoryId(),
-							"en",
-							categoryName,
-							category.isCanBeShipped()
-						);
-    	}).toList();
-    	
-        model.addAttribute("categories", categoryDTOs);
-        return "categories/list";
-    }
+	@GetMapping
+	public String list(Model model) {
+		List<ProductCategory> categories = productCategoryService.getAllProductCategories();
+		List<ProductCategoryDTO> categoryDTOs = categories.stream().map(category -> {
+			ProductCategoryTranslation translation = productCategoryTranslationService
+					.getTranslation(category.getProductCategoryId(), "en");
+			String categoryName = translation != null ? translation.getCategoryName() : "N/A";
+			return new ProductCategoryDTO(category.getProductCategoryId(), "en", categoryName,
+					category.isCanBeShipped());
+		}).toList();
 
-    @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("category", new ProductCategoryDTO());
-        model.addAttribute("languages", languageService.getAllLanguages());
-        return "categories/form";
-    }
+		model.addAttribute("categories", categoryDTOs);
+		return "categories/list";
+	}
 
-    @PostMapping("/save")
-    public String save(@ModelAttribute ProductCategoryDTO category) {
-        int id = productCategoryService.addProductCategory(new ProductCategory(category.isCanBeShipped()));
-        productCategoryTranslationService.addTranslation(
+	@GetMapping("/new")
+	public String createForm(Model model) {
+		model.addAttribute("category", new ProductCategoryDTO());
+		model.addAttribute("languages", languageService.getAllLanguages());
+		return "categories/form";
+	}
+
+	@PostMapping("/save")
+	public String save(@ModelAttribute ProductCategoryDTO category) {
+		int id = productCategoryService.addProductCategory(new ProductCategory(category.isCanBeShipped()));
+		productCategoryTranslationService.addTranslation(
 				new ProductCategoryTranslation(id, category.getLanguageId(), category.getCategoryName()));
-        return "redirect:/categories";
-    }
+		return "redirect:/categories";
+	}
 
-    @GetMapping("/edit")
-    public String edit(@RequestParam("id") int id, Model model) {
-        model.addAttribute("category", productCategoryService.getProductCategoryById(id));
-        model.addAttribute("languages", languageService.getAllLanguages());
-        return "categories/form";
-    }
+	@GetMapping("/edit")
+	public String edit(@RequestParam("id") int id, Model model) {
+		ProductCategory category = productCategoryService.getProductCategoryById(id);
+		if (category == null) {
+			return "redirect:/categories";
+		}
+		ProductCategoryTranslation translation = productCategoryTranslationService.getTranslation(id, "en");
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute ProductCategory category) {
-        productCategoryService.updateProductCategory(category);
-        return "redirect:/categories";
-    }
+		ProductCategoryDTO categoryDTO = new ProductCategoryDTO(category.getProductCategoryId(), "en",
+				translation != null ? translation.getCategoryName() : "N/A", category.isCanBeShipped());
 
-    @GetMapping("/delete")
-    public String delete(@RequestParam("id") int id) {
-        productCategoryService.deleteProductCategory(id);
-        return "redirect:/categories";
-    }
+		model.addAttribute("category", categoryDTO);
+		model.addAttribute("languages", languageService.getAllLanguages());
+		return "categories/form";
+	}
+
+	@PostMapping("/update")
+	public String update(@ModelAttribute ProductCategoryDTO category) {
+		productCategoryService.updateProductCategory(new ProductCategory(category.getProductCategoryId(),
+				category.isCanBeShipped()));
+		productCategoryTranslationService.updateTranslation(new ProductCategoryTranslation(category.getProductCategoryId(),
+				category.getLanguageId(), category.getCategoryName()));
+		return "redirect:/categories";
+	}
+
+	@GetMapping("/delete")
+	public String delete(@RequestParam("id") int id) {
+		productCategoryService.deleteProductCategory(id);
+		return "redirect:/categories";
+	}
+
+	@GetMapping("/meanings/list")
+	public String listMeanings(@RequestParam("id") int id, Model model) {
+		model.addAttribute("meanings", productCategoryTranslationService.getProductCategoryTranslationsById(id));
+		model.addAttribute("languages", languageService.getAllLanguages());
+		model.addAttribute("categoryId", id);
+		return "categories/meanings";
+	}
+
+	@PostMapping("/meanings/new")
+	public String addMeaning(@ModelAttribute ProductCategoryTranslation translation) {
+		productCategoryTranslationService.addTranslation(translation);
+		return "redirect:/categories/meanings/list?id=" + translation.getProductCategoryID();
+	}
 
 }
