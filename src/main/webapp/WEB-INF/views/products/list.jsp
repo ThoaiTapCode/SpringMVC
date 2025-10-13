@@ -1,4 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -28,8 +30,12 @@
         <td><c:out value="${p.description}"/></td>
         <td><c:out value="${p.productCategoryName}"/></td>
         <td>
-          <a class="btn btn-primary btn-sm" href="${pageContext.request.contextPath}/products/edit?id=${p.productId}">Edit</a>
-          <a class="btn btn-danger btn-sm" href="${pageContext.request.contextPath}/products/delete?id=${p.productId}" onclick="return confirm('Delete?')">Delete</a>
+          <a class="btn btn-info btn-sm" href="${pageContext.request.contextPath}/products/meanings/list?id=${p.productId}">
+            <i class="bi bi-translate"></i> Quản lý nghĩa
+          </a>
+          <a class="btn btn-danger btn-sm" href="${pageContext.request.contextPath}/products/delete?id=${p.productId}" onclick="return confirm('Bạn có muốn xóa?')">
+            <i class="bi bi-trash"></i> Xóa
+          </a>
         </td>
       </tr>
     </c:forEach>

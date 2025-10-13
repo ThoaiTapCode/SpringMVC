@@ -33,4 +33,9 @@ public class ProductTranslationServiceImpl implements ProductTranslationService 
 		productTranslationRepository.delete(productId, languageId);
 	}
 
+	@Override
+	public java.util.List<ProductTranslation> getProductTranslationsById(int productId) {
+		return productTranslationRepository.getProductTranslationsById(productId);
+	}
+
 }

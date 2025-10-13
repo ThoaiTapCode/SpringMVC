@@ -5,8 +5,8 @@
 
 <div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2>Danh sách nghĩa của danh mục</h2>
-		<a href="${pageContext.request.contextPath}/categories" class="btn btn-secondary">Quay lại</a>
+		<h2>Danh sách nghĩa của sản phẩm</h2>
+		<a href="${pageContext.request.contextPath}/products?lang=en" class="btn btn-secondary">Quay lại</a>
 	</div>
 
 	<!-- Form thêm nghĩa mới -->
@@ -16,8 +16,8 @@
 		</div>
 		<div class="card-body">
 			<form method="post"
-				action="${pageContext.request.contextPath}/categories/meanings/new">
-				<input type="hidden" name="productCategoryID" value="${categoryId}" />
+				action="${pageContext.request.contextPath}/products/meanings/new">
+				<input type="hidden" name="productId" value="${productId}" />
 				
 				<div class="mb-3">
 					<label class="form-label" for="languageID">Ngôn ngữ</label>
@@ -30,8 +30,13 @@
 				</div>
 
 				<div class="mb-3">
-					<label class="form-label" for="categoryName">Tên danh mục</label> 
-					<input type="text" class="form-control" name="categoryName" required />
+					<label class="form-label" for="productName">Tên sản phẩm</label> 
+					<input type="text" class="form-control" name="productName" required />
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" for="productDescription">Mô tả sản phẩm</label> 
+					<textarea class="form-control" name="productDescription" rows="3" required></textarea>
 				</div>
 
 				<button class="btn btn-primary" type="submit">
@@ -51,31 +56,36 @@
 				<thead class="table-light">
 					<tr>
 						<th>Ngôn ngữ</th>
-						<th>Tên danh mục</th>
+						<th>Tên sản phẩm</th>
+						<th>Mô tả sản phẩm</th>
 						<th>Hành động</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="cat" items="${meanings}">
+					<c:forEach var="prod" items="${meanings}">
 						<tr>
-							<td><c:out value="${cat.languageID}" /></td>
+							<td><c:out value="${prod.languageID}" /></td>
 							<td>
 								<form method="post" 
-									action="${pageContext.request.contextPath}/categories/meanings/update"
+									action="${pageContext.request.contextPath}/products/meanings/update"
 									class="d-inline">
-									<input type="hidden" name="productCategoryID" value="${cat.productCategoryID}" />
-									<input type="hidden" name="languageID" value="${cat.languageID}" />
-									<div class="input-group">
-										<input type="text" class="form-control" name="categoryName" 
-											value="${cat.categoryName}" required />
-										<button class="btn btn-sm btn-warning" type="submit" title="Cập nhật">
-											<i class="bi bi-save"></i> Lưu
-										</button>
+									<input type="hidden" name="productId" value="${prod.productId}" />
+									<input type="hidden" name="languageID" value="${prod.languageID}" />
+									<div class="mb-2">
+										<input type="text" class="form-control" name="productName" 
+											value="${prod.productName}" required />
 									</div>
+									<div class="mb-2">
+										<textarea class="form-control" name="productDescription" rows="2" required>${prod.productDescription}</textarea>
+									</div>
+									<button class="btn btn-sm btn-warning" type="submit" title="Cập nhật">
+										<i class="bi bi-save"></i> Lưu
+									</button>
 								</form>
 							</td>
+							<td><c:out value="${prod.productDescription}" /></td>
 							<td>
-								<a href="${pageContext.request.contextPath}/categories/meanings/delete?categoryId=${cat.productCategoryID}&languageId=${cat.languageID}"
+								<a href="${pageContext.request.contextPath}/products/meanings/delete?productId=${prod.productId}&languageId=${prod.languageID}"
 									class="btn btn-sm btn-danger"
 									onclick="return confirm('Bạn có chắc chắn muốn xóa nghĩa này?')">
 									<i class="bi bi-trash"></i> Xóa
@@ -85,7 +95,7 @@
 					</c:forEach>
 					<c:if test="${empty meanings}">
 						<tr>
-							<td colspan="3" class="text-center text-muted">Chưa có nghĩa nào</td>
+							<td colspan="4" class="text-center text-muted">Chưa có nghĩa nào</td>
 						</tr>
 					</c:if>
 				</tbody>

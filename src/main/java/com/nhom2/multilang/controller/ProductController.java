@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.nhom2.multilang.dto.CreateProductDTO;
-import com.nhom2.multilang.dto.ProductDTO;
 import com.nhom2.multilang.model.*;
 import com.nhom2.multilang.service.*;
 
@@ -24,6 +23,8 @@ public class ProductController {
 	private ProductTranslationService productTranslationService;
 	@Autowired
 	private ProductCategoryTranslationService productCategoryTranslationService;
+	@Autowired
+	private LanguageService languageService;
 
 	@GetMapping
 	public String list(@RequestParam("lang") String lang, Model model) {
@@ -47,23 +48,36 @@ public class ProductController {
 		return "redirect:/products";
 	}
 
-	@GetMapping("/edit")
-	public String edit(@RequestParam("id") int id, Model model) {
-		model.addAttribute("product", productService.getProductById(id));
-		model.addAttribute("categories", productCategoryTranslationService.getAllCategories("en"));
-		return "products/form";
-	}
-
-	@PostMapping("/update")
-	public String update(@ModelAttribute Product product) {
-		productService.updateProduct(product);
-		return "redirect:/products";
-	}
-
 	@GetMapping("/delete")
 	public String delete(@RequestParam("id") int id) {
 		productService.deleteProduct(id);
 		return "redirect:/products";
+	}
+
+	@GetMapping("/meanings/list")
+	public String listMeanings(@RequestParam("id") int id, Model model) {
+		model.addAttribute("meanings", productTranslationService.getProductTranslationsById(id));
+		model.addAttribute("languages", languageService.getAllLanguages());
+		model.addAttribute("productId", id);
+		return "products/meanings";
+	}
+
+	@PostMapping("/meanings/new")
+	public String addMeaning(@ModelAttribute ProductTranslation translation) {
+		productTranslationService.addTranslation(translation);
+		return "redirect:/products/meanings/list?id=" + translation.getProductId();
+	}
+
+	@PostMapping("/meanings/update")
+	public String updateMeaning(@ModelAttribute ProductTranslation translation) {
+		productTranslationService.updateTranslation(translation);
+		return "redirect:/products/meanings/list?id=" + translation.getProductId();
+	}
+
+	@GetMapping("/meanings/delete")
+	public String deleteMeaning(@RequestParam("productId") int productId, @RequestParam("languageId") String languageId) {
+		productTranslationService.deleteTranslation(productId, languageId);
+		return "redirect:/products/meanings/list?id=" + productId;
 	}
 
 }

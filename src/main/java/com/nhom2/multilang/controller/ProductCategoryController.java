@@ -30,13 +30,13 @@ public class ProductCategoryController {
 	private ProductCategoryTranslationService productCategoryTranslationService;
 
 	@GetMapping
-	public String list(Model model) {
+	public String list(@RequestParam("lang") String lang, Model model) {
 		List<ProductCategory> categories = productCategoryService.getAllProductCategories();
 		List<ProductCategoryDTO> categoryDTOs = categories.stream().map(category -> {
 			ProductCategoryTranslation translation = productCategoryTranslationService
-					.getTranslation(category.getProductCategoryId(), "en");
+					.getTranslation(category.getProductCategoryId(), lang);
 			String categoryName = translation != null ? translation.getCategoryName() : "N/A";
-			return new ProductCategoryDTO(category.getProductCategoryId(), "en", categoryName,
+			return new ProductCategoryDTO(category.getProductCategoryId(), lang, categoryName,
 					category.isCanBeShipped());
 		}).toList();
 
@@ -60,14 +60,14 @@ public class ProductCategoryController {
 	}
 
 	@GetMapping("/edit")
-	public String edit(@RequestParam("id") int id, Model model) {
+	public String edit(@RequestParam("lang") String lang, @RequestParam("id") int id, Model model) {
 		ProductCategory category = productCategoryService.getProductCategoryById(id);
 		if (category == null) {
 			return "redirect:/categories";
 		}
-		ProductCategoryTranslation translation = productCategoryTranslationService.getTranslation(id, "en");
+		ProductCategoryTranslation translation = productCategoryTranslationService.getTranslation(id, lang);
 
-		ProductCategoryDTO categoryDTO = new ProductCategoryDTO(category.getProductCategoryId(), "en",
+		ProductCategoryDTO categoryDTO = new ProductCategoryDTO(category.getProductCategoryId(), lang,
 				translation != null ? translation.getCategoryName() : "N/A", category.isCanBeShipped());
 
 		model.addAttribute("category", categoryDTO);
@@ -102,6 +102,18 @@ public class ProductCategoryController {
 	public String addMeaning(@ModelAttribute ProductCategoryTranslation translation) {
 		productCategoryTranslationService.addTranslation(translation);
 		return "redirect:/categories/meanings/list?id=" + translation.getProductCategoryID();
+	}
+
+	@PostMapping("/meanings/update")
+	public String updateMeaning(@ModelAttribute ProductCategoryTranslation translation) {
+		productCategoryTranslationService.updateTranslation(translation);
+		return "redirect:/categories/meanings/list?id=" + translation.getProductCategoryID();
+	}
+
+	@GetMapping("/meanings/delete")
+	public String deleteMeaning(@RequestParam("categoryId") int categoryId, @RequestParam("languageId") String languageId) {
+		productCategoryTranslationService.deleteTranslation(categoryId, languageId);
+		return "redirect:/categories/meanings/list?id=" + categoryId;
 	}
 
 }
