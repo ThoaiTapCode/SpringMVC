@@ -29,6 +29,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="${pageContext.request.contextPath}/shop?lang=${currentLang}">
+            <i class="bi bi-shop"></i> Cửa hàng
+          </a>
+        </li>
         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/languages">Languages</a></li>
         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/categories?lang=${currentLang}">Categories</a></li>
         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/products?lang=${currentLang}">Products</a></li>

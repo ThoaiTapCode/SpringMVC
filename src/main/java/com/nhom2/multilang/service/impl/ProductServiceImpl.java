@@ -64,5 +64,29 @@ public class ProductServiceImpl implements ProductService {
 	public void deleteProduct(int id) {
 		productRepository.deleteProduct(id);
 	}
+
+	@Override
+	public List<ProductDTO> getProductsByCategory(int categoryId, String languageId) {
+		List<Product> products = productRepository.getAllProducts();
+		return products.stream()
+			.filter(p -> p.getProductCategoryId() == categoryId)
+			.map(p -> {
+				ProductDTO dto = new ProductDTO();
+				dto.setProductId(p.getProductId());
+				dto.setPrice(p.getPrice());
+				dto.setWeight(p.getWeight());
+				
+				ProductCategoryTranslation pc = 
+						productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
+				
+				dto.setProductCategoryName(pc != null ? pc.getCategoryName() : "N/A");
+				var translation = productTranslationService.getTranslation(p.getProductId(), languageId);
+				if (translation != null) {
+					dto.setProductName(translation.getProductName());
+					dto.setDescription(translation.getProductDescription());
+				}
+				return dto;
+			}).toList();
+	}
 	
 }
