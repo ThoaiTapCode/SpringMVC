@@ -16,7 +16,7 @@ public class MySqlLanguageDAO implements LanguageDAO {
 	
 	@Override
 	public List<Language> getAllLanguages() {
-		String sql = "SELECT * FROM language";
+		String sql = "SELECT * FROM language WHERE isDeleted = 0";
 		return jdbcTemplate.query(sql, (rs, rowNum) -> new Language(
 			rs.getString("languageId"),
 			rs.getString("language")
@@ -25,7 +25,7 @@ public class MySqlLanguageDAO implements LanguageDAO {
 	
 	@Override
 	public Language getLanguageById(String languageID) {
-		String sql = "SELECT * FROM language WHERE languageId = ?";
+		String sql = "SELECT * FROM language WHERE languageId = ? AND isDeleted = 0";
 		return jdbcTemplate.queryForObject(sql, new Object[] { languageID }, (rs, rowNum) -> new Language(
 			rs.getString("LanguageId"),
 			rs.getString("language")
@@ -46,7 +46,7 @@ public class MySqlLanguageDAO implements LanguageDAO {
 	
 	@Override
 	public void deleteLanguage(String languageID) {
-		String sql = "DELETE FROM language WHERE languageId = ?";
+		String sql = "UPDATE language SET isDeleted = 1 WHERE languageId = ?";
 		jdbcTemplate.update(sql, languageID);
 	}
 }

@@ -52,11 +52,16 @@ public class ProductCategoryController {
 	}
 
 	@PostMapping("/save")
-	public String save(@ModelAttribute ProductCategoryDTO category) {
+	public String save(@ModelAttribute ProductCategoryDTO category, 
+			org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+		// Mặc định luôn dùng ngôn ngữ "vi" khi thêm mới
 		int id = productCategoryService.addProductCategory(new ProductCategory(category.isCanBeShipped()));
 		productCategoryTranslationService.addTranslation(
-				new ProductCategoryTranslation(id, category.getLanguageId(), category.getCategoryName()));
-		return "redirect:/categories";
+				new ProductCategoryTranslation(id, "vi", category.getCategoryName()));
+		
+		redirectAttributes.addFlashAttribute("success", 
+			"Tạo danh mục thành công! Vào 'Quản lý nghĩa' để thêm các ngôn ngữ khác.");
+		return "redirect:/categories?lang=vi";
 	}
 
 	@GetMapping("/edit")
@@ -99,20 +104,38 @@ public class ProductCategoryController {
 	}
 
 	@PostMapping("/meanings/new")
-	public String addMeaning(@ModelAttribute ProductCategoryTranslation translation) {
+	public String addMeaning(@ModelAttribute ProductCategoryTranslation translation, Model model) {
+		// Kiểm tra xem nghĩa đã tồn tại chưa
+		ProductCategoryTranslation existingTranslation = productCategoryTranslationService
+				.getTranslation(translation.getProductCategoryID(), translation.getLanguageID());
+		
+		if (existingTranslation != null) {
+			// Nghĩa đã tồn tại, hiển thị thông báo lỗi
+			model.addAttribute("meanings", productCategoryTranslationService.getProductCategoryTranslationsById(translation.getProductCategoryID()));
+			model.addAttribute("languages", languageService.getAllLanguages());
+			model.addAttribute("categoryId", translation.getProductCategoryID());
+			model.addAttribute("error", "Nghĩa cho ngôn ngữ này đã tồn tại! Vui lòng sử dụng chức năng 'Lưu' để cập nhật nghĩa hiện có.");
+			model.addAttribute("duplicateLanguage", translation.getLanguageID());
+			return "categories/meanings";
+		}
+		
 		productCategoryTranslationService.addTranslation(translation);
 		return "redirect:/categories/meanings/list?id=" + translation.getProductCategoryID();
 	}
 
 	@PostMapping("/meanings/update")
-	public String updateMeaning(@ModelAttribute ProductCategoryTranslation translation) {
+	public String updateMeaning(@ModelAttribute ProductCategoryTranslation translation, 
+			org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 		productCategoryTranslationService.updateTranslation(translation);
+		redirectAttributes.addFlashAttribute("success", "Cập nhật nghĩa thành công!");
 		return "redirect:/categories/meanings/list?id=" + translation.getProductCategoryID();
 	}
 
 	@GetMapping("/meanings/delete")
-	public String deleteMeaning(@RequestParam("categoryId") int categoryId, @RequestParam("languageId") String languageId) {
+	public String deleteMeaning(@RequestParam("categoryId") int categoryId, @RequestParam("languageId") String languageId,
+			org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 		productCategoryTranslationService.deleteTranslation(categoryId, languageId);
+		redirectAttributes.addFlashAttribute("success", "Xóa nghĩa thành công!");
 		return "redirect:/categories/meanings/list?id=" + categoryId;
 	}
 

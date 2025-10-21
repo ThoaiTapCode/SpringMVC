@@ -23,14 +23,14 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="${pageContext.request.contextPath}/">Multilang</a>
+    <a class="navbar-brand" href="${pageContext.request.contextPath}?lang=${currentLang}">Multilang</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/languages">Languages</a></li>
-        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/categories">Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/categories?lang=${currentLang}">Categories</a></li>
         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/products?lang=${currentLang}">Products</a></li>
       </ul>
       

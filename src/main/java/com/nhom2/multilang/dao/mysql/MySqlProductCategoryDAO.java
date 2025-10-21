@@ -16,7 +16,7 @@ public class MySqlProductCategoryDAO implements ProductCategoryDAO {
 	
 	@Override
 	public List<ProductCategory> getAllProductCategories() {
-		String sql = "SELECT * FROM productcategory";
+		String sql = "SELECT * FROM productcategory WHERE isDeleted = 0";
 		return jdbcTemplate.query(sql, (rs, rowNum) -> new ProductCategory(
 				rs.getInt("productCategoryID"),
 				rs.getBoolean("canBeShipped")
@@ -25,7 +25,7 @@ public class MySqlProductCategoryDAO implements ProductCategoryDAO {
 	
 	@Override
 	public ProductCategory getProductCategoryById(int id) {
-		String sql = "SELECT * FROM productcategory WHERE productCategoryID = ?";
+		String sql = "SELECT * FROM productcategory WHERE productCategoryID = ? AND isDeleted = 0";
 		return jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNum) -> new ProductCategory(
 				rs.getInt("productCategoryID"),
 				rs.getBoolean("canBeShipped")
@@ -49,7 +49,7 @@ public class MySqlProductCategoryDAO implements ProductCategoryDAO {
 	
 	@Override
 	public void deleteProductCategory(int id) {
-		String sql = "DELETE FROM productcategory WHERE productCategoryID = ?";
+		String sql = "UPDATE productcategory SET isDeleted = 1 WHERE productCategoryID = ?";
 		jdbcTemplate.update(sql, id);
 	}
 }

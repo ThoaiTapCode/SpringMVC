@@ -4,9 +4,20 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>Products</h2>
-  <a class="btn btn-success" href="${pageContext.request.contextPath}/products/new">Add Product</a>
+  <h2>Danh sách Sản phẩm</h2>
+  <a class="btn btn-success" href="${pageContext.request.contextPath}/products/new?lang=${currentLang}">
+    <i class="bi bi-plus-circle"></i> Thêm Sản phẩm
+  </a>
 </div>
+
+<!-- Thông báo thành công -->
+<c:if test="${not empty success}">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<i class="bi bi-check-circle-fill"></i>
+		<strong>Thành công!</strong> ${success}
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+</c:if>
 
 <table class="table table-hover">
   <thead>

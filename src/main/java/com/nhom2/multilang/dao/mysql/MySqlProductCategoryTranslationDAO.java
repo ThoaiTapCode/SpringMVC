@@ -18,7 +18,8 @@ public class MySqlProductCategoryTranslationDAO implements ProductCategoryTransl
 	@Override
 	public ProductCategoryTranslation getProductCategoryByIdAndLanguage(int id, String languageID) {
 		try {
-			String sql = "SELECT * FROM productcategorytranslation WHERE productCategoryID = ? AND languageID = ?";
+			String sql = "SELECT * FROM productcategorytranslation WHERE "
+					+ "productCategoryID = ? AND languageID = ? AND isDeleted = 0";
 			return jdbcTemplate.queryForObject(sql, new Object[] { id, languageID },
 					(rs, rowNum) -> new ProductCategoryTranslation(rs.getInt("productCategoryID"),
 							rs.getString("languageID"), rs.getString("categoryName")));
@@ -29,7 +30,7 @@ public class MySqlProductCategoryTranslationDAO implements ProductCategoryTransl
 
 	@Override
 	public List<ProductCategoryTranslation> getProductCategoryTranslationsById(int id) {
-		String sql = "SELECT * FROM productcategorytranslation WHERE productCategoryID = ?";
+		String sql = "SELECT * FROM productcategorytranslation WHERE productCategoryID = ? AND isDeleted = 0";
 		return jdbcTemplate.query(sql, new Object[] { id },
 				(rs, rowNum) -> new ProductCategoryTranslation(rs.getInt("productCategoryID"),
 						rs.getString("languageID"), rs.getString("categoryName")));
@@ -49,7 +50,7 @@ public class MySqlProductCategoryTranslationDAO implements ProductCategoryTransl
 
 	@Override
 	public void deleteProductCategoryTranslation(int id, String languageID) {
-		String sql = "DELETE FROM productcategorytranslation WHERE productCategoryID = ? AND languageID = ?";
+		String sql = "UPDATE productcategorytranslation SET isDeleted = 1 WHERE productCategoryID = ? AND languageID = ?";
 		jdbcTemplate.update(sql, id, languageID);
 	}
 }

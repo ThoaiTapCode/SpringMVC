@@ -18,7 +18,8 @@ public class MySqlProductTranslationDAO implements ProductTranslationDAO {
 	@Override
 	public ProductTranslation getProductTranslationByIdAndLang(int productId, String languageId) {
 		try {
-			String sql = "SELECT * FROM producttranslation WHERE productID = ? AND languageID = ?";
+			String sql = "SELECT * FROM producttranslation "
+					+ "WHERE productID = ? AND languageID = ? AND isDeleted = 0";
 			return jdbcTemplate.queryForObject(sql, new Object[] { productId, languageId },
 					(rs, rowNum) -> new ProductTranslation(
 							rs.getInt("productID"),
@@ -45,13 +46,13 @@ public class MySqlProductTranslationDAO implements ProductTranslationDAO {
 	
 	@Override
 	public void deleteProductTranslation(int productId, String languageId) {
-		String sql = "DELETE FROM producttranslation WHERE productID = ? AND languageID = ?";
+		String sql = "UPDATE producttranslation SET isDeleted = 1 WHERE productID = ? AND languageID = ?";
 		jdbcTemplate.update(sql, productId, languageId);
 	}
 	
 	@Override
 	public List<ProductTranslation> getProductTranslationsById(int productId) {
-		String sql = "SELECT * FROM producttranslation WHERE productID = ?";
+		String sql = "SELECT * FROM producttranslation WHERE productID = ? AND isDeleted = 0";
 		return jdbcTemplate.query(sql, new Object[] { productId },
 				(rs, rowNum) -> new ProductTranslation(
 						rs.getInt("productID"),

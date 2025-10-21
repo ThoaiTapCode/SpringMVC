@@ -9,7 +9,7 @@
     <p class="col-md-8 fs-4">
     	Nơi bạn có thể thêm sản phẩm và danh mục sản phẩm với hỗ trợ đa ngôn ngữ.
     </p>
-    <a class="btn btn-primary btn-lg" href="${pageContext.request.contextPath}/products" role="button">Bắt đầu</a>
+    <a class="btn btn-primary btn-lg" href="${pageContext.request.contextPath}/products?lang=${currentLang}" role="button">Bắt đầu</a>
   </div>
 </div>
 

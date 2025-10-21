@@ -6,9 +6,19 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
 	<h2>Danh mục sản phẩm</h2>
 	<a class="btn btn-success"
-		href="${pageContext.request.contextPath}/categories/new">Add
-		Category</a>
+		href="${pageContext.request.contextPath}/categories/new">
+		<i class="bi bi-plus-circle"></i> Thêm Category
+	</a>
 </div>
+
+<!-- Thông báo thành công -->
+<c:if test="${not empty success}">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<i class="bi bi-check-circle-fill"></i>
+		<strong>Thành công!</strong> ${success}
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+</c:if>
 
 <table class="table table-bordered">
 	<thead>
