@@ -88,5 +88,39 @@ public class ProductServiceImpl implements ProductService {
 				return dto;
 			}).toList();
 	}
+
+	@Override
+	public List<ProductDTO> searchProducts(String keyword, String languageId) {
+		if (keyword == null || keyword.trim().isEmpty()) {
+			return getAllProducts(languageId);
+		}
+		String k = keyword.trim().toLowerCase();
+		List<Product> products = productRepository.getAllProducts();
+		return products.stream()
+			.filter(p -> {
+				var tr = productTranslationService.getTranslation(p.getProductId(), languageId);
+				if (tr == null) return false;
+				String name = tr.getProductName() == null ? "" : tr.getProductName().toLowerCase();
+				String desc = tr.getProductDescription() == null ? "" : tr.getProductDescription().toLowerCase();
+				return name.contains(k) || desc.contains(k);
+			})
+			.map(p -> {
+				ProductDTO dto = new ProductDTO();
+				dto.setProductId(p.getProductId());
+				dto.setPrice(p.getPrice());
+				dto.setWeight(p.getWeight());
+
+				ProductCategoryTranslation pc = 
+					productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
+
+				dto.setProductCategoryName(pc != null ? pc.getCategoryName() : "N/A");
+				var translation = productTranslationService.getTranslation(p.getProductId(), languageId);
+				if (translation != null) {
+					dto.setProductName(translation.getProductName());
+					dto.setDescription(translation.getProductDescription());
+				}
+				return dto;
+			}).toList();
+	}
 	
 }

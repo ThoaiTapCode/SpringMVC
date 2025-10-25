@@ -1,3 +1,19 @@
+# Screenshot
+
+- Giao diện trang tìm kiếm
+![](public/imgs/search.png)-
+- Giao diện ngôn ngữ mới
+![](public/imgs/quanlyngonngu.png)
+
+![](public/imgs/themnghia.png)
+
+- Ảnh ide
+![](public/imgs/ide1.png)
+
+![](public/imgs/ide2.png)
+
+---
+
 ## Yêu cầu hệ thống
 
 ### Phần mềm cần cài đặt

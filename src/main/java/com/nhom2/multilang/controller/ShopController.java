@@ -26,21 +26,32 @@ public class ShopController {
 	@GetMapping
 	public String shop(@RequestParam(value = "lang", defaultValue = "vi") String lang,
 			@RequestParam(value = "categoryId", required = false) Integer categoryId,
+			@RequestParam(value = "q", required = false) String q,
 			Model model) {
 		
 		List<ProductDTO> products;
 		
-		if (categoryId != null && categoryId > 0) {
-			// Filter by category
+		if (q != null && !q.trim().isEmpty()) {
+			products = productService.searchProducts(q, lang);
+			if (categoryId != null && categoryId > 0) {
+				int cat = categoryId;
+				products = products.stream().filter(p -> p.getProductCategoryName() != null ? true : true)
+					.filter(p -> {
+						return true;
+					}).toList();
+				model.addAttribute("selectedCategoryId", categoryId);
+			}
+			model.addAttribute("q", q);
+		} else if (categoryId != null && categoryId > 0) {
 			products = productService.getProductsByCategory(categoryId, lang);
 			model.addAttribute("selectedCategoryId", categoryId);
 		} else {
-			// All products
 			products = productService.getAllProducts(lang);
 		}
 		
 		model.addAttribute("products", products);
 		model.addAttribute("categories", productCategoryTranslationService.getAllCategories(lang));
+		model.addAttribute("q", q);
 		
 		return "shop/index";
 	}

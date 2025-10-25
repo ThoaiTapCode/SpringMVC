@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -366,6 +367,19 @@
         <div class="hero-section fade-in">
             <h1><i class="bi bi-basket"></i> Khám phá Sản phẩm</h1>
             <p class="lead text-muted">Chọn sản phẩm yêu thích của bạn từ các danh mục đa dạng</p>
+                <!-- Search Form -->
+                <form class="d-flex justify-content-center mt-3" method="get" action="${pageContext.request.contextPath}/shop">
+                    <input type="hidden" name="lang" value="${currentLang}" />
+                    <c:if test="${not empty selectedCategoryId}">
+                        <input type="hidden" name="categoryId" value="${selectedCategoryId}" />
+                    </c:if>
+                    <div class="input-group" style="max-width:720px; width:100%;">
+                        <input type="search" name="q" class="form-control form-control-lg" placeholder="Tìm kiếm sản phẩm, mô tả..." value="${fn:escapeXml(q)}" aria-label="Tìm kiếm" />
+                        <button class="btn btn-primary btn-lg" type="submit">
+                            <i class="bi bi-search"></i> Tìm
+                        </button>
+                    </div>
+                </form>
         </div>
         
         <!-- Category Filter -->

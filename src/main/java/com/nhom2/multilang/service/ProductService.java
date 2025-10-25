@@ -8,6 +8,7 @@ import com.nhom2.multilang.model.Product;
 public interface ProductService {
 	public List<ProductDTO> getAllProducts(String languageId);
 	public List<ProductDTO> getProductsByCategory(int categoryId, String languageId);
+	public List<ProductDTO> searchProducts(String keyword, String languageId);
 	public Product getProductById(int id);
 	public int addProduct(Product product);
 	public void updateProduct(Product product);
