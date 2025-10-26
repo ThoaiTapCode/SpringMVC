@@ -34,11 +34,11 @@ public class ShopController {
 		if (q != null && !q.trim().isEmpty()) {
 			products = productService.searchProducts(q, lang);
 			if (categoryId != null && categoryId > 0) {
-				int cat = categoryId;
-				products = products.stream().filter(p -> p.getProductCategoryName() != null ? true : true)
-					.filter(p -> {
-						return true;
-					}).toList();
+				// Filter by category after search
+				final int selectedCategoryId = categoryId;
+				products = products.stream()
+					.filter(p -> p.getProductCategoryId() == selectedCategoryId)
+					.toList();
 				model.addAttribute("selectedCategoryId", categoryId);
 			}
 			model.addAttribute("q", q);

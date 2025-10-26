@@ -25,7 +25,7 @@ public class GlobalControllerAdvice {
 	@ModelAttribute("currentLang")
 	public String getCurrentLanguage(HttpServletRequest request) {
 		String lang = request.getParameter("lang");
-		return lang != null ? lang : "en";
+		return lang != null ? lang : "vi";
 	}
 
 	@ModelAttribute("currentUrl")

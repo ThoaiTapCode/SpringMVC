@@ -35,7 +35,7 @@ public class ProductController {
 	@GetMapping("/new")
 	public String createForm(@RequestParam(value = "lang", defaultValue = "vi") String lang, Model model) {
 		model.addAttribute("product", new Product());
-		// Lấy danh mục bằng tiếng Việt để người dùng dễ chọn
+		// Get categories in Vietnamese for easier selection
 		model.addAttribute("categories", productCategoryTranslationService.getAllCategories("vi"));
 		return "products/form-add";
 	}

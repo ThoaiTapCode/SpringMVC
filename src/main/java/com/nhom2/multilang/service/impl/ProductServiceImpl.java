@@ -31,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
 			dto.setProductId(p.getProductId());
 			dto.setPrice(p.getPrice());
 			dto.setWeight(p.getWeight());
+			dto.setProductCategoryId(p.getProductCategoryId());
 			
 			ProductCategoryTranslation pc = 
 					productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
@@ -75,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
 				dto.setProductId(p.getProductId());
 				dto.setPrice(p.getPrice());
 				dto.setWeight(p.getWeight());
+				dto.setProductCategoryId(p.getProductCategoryId());
 				
 				ProductCategoryTranslation pc = 
 						productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
@@ -102,13 +104,21 @@ public class ProductServiceImpl implements ProductService {
 				if (tr == null) return false;
 				String name = tr.getProductName() == null ? "" : tr.getProductName().toLowerCase();
 				String desc = tr.getProductDescription() == null ? "" : tr.getProductDescription().toLowerCase();
-				return name.contains(k) || desc.contains(k);
+				
+				// Search by category name too
+				ProductCategoryTranslation pc = 
+					productCategoryService.getTranslation(p.getProductCategoryId(), languageId);
+				String categoryName = pc != null && pc.getCategoryName() != null ? 
+					pc.getCategoryName().toLowerCase() : "";
+				
+				return name.contains(k) || desc.contains(k) || categoryName.contains(k);
 			})
 			.map(p -> {
 				ProductDTO dto = new ProductDTO();
 				dto.setProductId(p.getProductId());
 				dto.setPrice(p.getPrice());
 				dto.setWeight(p.getWeight());
+				dto.setProductCategoryId(p.getProductCategoryId());
 
 				ProductCategoryTranslation pc = 
 					productCategoryService.getTranslation(p.getProductCategoryId(), languageId);

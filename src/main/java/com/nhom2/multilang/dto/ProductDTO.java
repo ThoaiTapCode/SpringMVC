@@ -7,6 +7,7 @@ public class ProductDTO {
 	private double weight;
 	private String description;
 	private String productCategoryName;
+	private int productCategoryId;
 	
 	public ProductDTO() { }
 	
@@ -65,5 +66,13 @@ public class ProductDTO {
 
 	public void setProductCategoryName(String productCategoryName) {
 		this.productCategoryName = productCategoryName;
+	}
+
+	public int getProductCategoryId() {
+		return productCategoryId;
+	}
+
+	public void setProductCategoryId(int productCategoryId) {
+		this.productCategoryId = productCategoryId;
 	}
 }

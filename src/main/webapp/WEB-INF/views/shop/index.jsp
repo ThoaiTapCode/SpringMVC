@@ -382,6 +382,31 @@
                 </form>
         </div>
         
+        <!-- Search Results Info -->
+        <c:if test="${not empty q}">
+            <div class="search-results-info fade-in">
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <i class="bi bi-search me-2"></i>
+                    <div>
+                        Tìm thấy <strong>${fn:length(products)}</strong> sản phẩm cho từ khóa "<strong>${fn:escapeXml(q)}</strong>"
+                        <c:if test="${not empty selectedCategoryId}">
+                            trong danh mục <strong>
+                                <c:forEach var="cat" items="${categories}">
+                                    <c:if test="${cat.productCategoryID == selectedCategoryId}">
+                                        ${cat.categoryName}
+                                    </c:if>
+                                </c:forEach>
+                            </strong>
+                        </c:if>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/shop?lang=${currentLang}" 
+                       class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-x-circle"></i> Xóa bộ lọc
+                    </a>
+                </div>
+            </div>
+        </c:if>
+        
         <!-- Category Filter -->
         <div class="category-filter fade-in">
             <h5 class="mb-3"><i class="bi bi-filter-circle"></i> Lọc theo danh mục</h5>
@@ -415,8 +440,8 @@
                                 <span class="product-category">
                                     ${product.productCategoryName}
                                 </span>
-                                <h3 class="product-title">${product.productName}</h3>
-                                <p class="product-description">${product.description}</p>
+                                <h3 class="product-title" id="title-${product.productId}">${product.productName}</h3>
+                                <p class="product-description" id="desc-${product.productId}">${product.description}</p>
                                 <div class="product-meta">
                                     <span>
                                         <i class="bi bi-weight"></i> ${product.weight} kg
@@ -440,13 +465,32 @@
             </c:when>
             <c:otherwise>
                 <div class="empty-state fade-in">
-                    <i class="bi bi-inbox"></i>
-                    <h3>Không có sản phẩm</h3>
-                    <p>Hiện tại chưa có sản phẩm nào trong danh mục này.</p>
-                    <a href="${pageContext.request.contextPath}/shop?lang=${currentLang}" 
-                       class="btn btn-primary rounded-pill mt-3">
-                        <i class="bi bi-arrow-left"></i> Xem tất cả sản phẩm
-                    </a>
+                    <c:choose>
+                        <c:when test="${not empty q}">
+                            <i class="bi bi-search"></i>
+                            <h3>Không tìm thấy sản phẩm</h3>
+                            <p>Không có sản phẩm nào phù hợp với từ khóa "<strong>${fn:escapeXml(q)}</strong>"</p>
+                            <div class="mt-3">
+                                <a href="${pageContext.request.contextPath}/shop?lang=${currentLang}" 
+                                   class="btn btn-primary rounded-pill me-2">
+                                    <i class="bi bi-arrow-left"></i> Xem tất cả sản phẩm
+                                </a>
+                                <button onclick="document.querySelector('input[name=q]').value=''; document.querySelector('form').submit();" 
+                                        class="btn btn-outline-secondary rounded-pill">
+                                    <i class="bi bi-x-circle"></i> Xóa từ khóa
+                                </button>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <i class="bi bi-inbox"></i>
+                            <h3>Không có sản phẩm</h3>
+                            <p>Hiện tại chưa có sản phẩm nào trong danh mục này.</p>
+                            <a href="${pageContext.request.contextPath}/shop?lang=${currentLang}" 
+                               class="btn btn-primary rounded-pill mt-3">
+                                <i class="bi bi-arrow-left"></i> Xem tất cả sản phẩm
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -485,6 +529,28 @@
             card.style.transition = 'all 0.6s ease';
             observer.observe(card);
         });
+        
+        // Highlight search keywords
+        function highlightSearchKeywords() {
+            const searchQuery = '${fn:escapeXml(q)}';
+            if (searchQuery && searchQuery.trim() !== '') {
+                const keywords = searchQuery.trim().toLowerCase().split(' ');
+                
+                document.querySelectorAll('.product-title, .product-description').forEach(element => {
+                    let content = element.textContent;
+                    keywords.forEach(keyword => {
+                        if (keyword.length > 1) {
+                            const regex = new RegExp(`(${keyword})`, 'gi');
+                            content = content.replace(regex, '<mark style="background: #fef08a; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+                        }
+                    });
+                    element.innerHTML = content;
+                });
+            }
+        }
+        
+        // Call highlight function after page load
+        setTimeout(highlightSearchKeywords, 100);
     </script>
 </body>
 </html>
